@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:8081
+      - MATERIA_SERVICE_URL=http://materia-service:8082
+      - APUNTE_SERVICE_URL=http://apunte-service:8083
+    networks:
+      - apuntesia-network
+
+  auth-service:
+    build: ./auth-service
+    env_file:
+      - .env
+    networks:
+      - apuntesia-network
+
+  materia-service:
+    build: ./materia-service
+    env_file:
+      - .env
+    networks:
+      - apuntesia-network
+
+  apunte-service:
+    build: ./apunte-service
+    env_file:
+      - .env
+    networks:
+      - apuntesia-network
+
+networks:
+  apuntesia-network:
+    driver: bridge
