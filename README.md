@@ -89,25 +89,6 @@ JWT_SECRET=<clave_secreta_larga_y_segura>
 GEMINI_API_KEY=<tu_api_key_de_gemini>
 ```
 
-> ⚠️ **Nunca subas el archivo `.env` al repositorio.** Asegúrate de que esté en `.gitignore`.
-
-Incluye en el repositorio un archivo `.env.example` como referencia para otros desarrolladores:
-
-```env
-# Base de datos (PostgreSQL / Supabase)
-SPRING_DATASOURCE_URL=
-SPRING_DATASOURCE_USERNAME=
-SPRING_DATASOURCE_PASSWORD=
-
-# Seguridad JWT
-JWT_SECRET=
-
-# Google Gemini
-GEMINI_API_KEY=
-```
-
----
-
 ## 🚀 Cómo levantar el proyecto
 
 ### Con Docker Compose (recomendado)
