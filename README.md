@@ -1,4 +1,4 @@
-# 📚 Klopp Backend — Apuntesia
+# 📚 Klopp Backend — ApuntesIA
 
 ![Java](https://img.shields.io/badge/Java-17-007396?style=flat-square&logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.5-6DB33F?style=flat-square&logo=springboot&logoColor=white)
@@ -88,6 +88,10 @@ JWT_SECRET=<clave_secreta_larga_y_segura>
 # Google Gemini
 GEMINI_API_KEY=<tu_api_key_de_gemini>
 ```
+
+> ⚠️ **Nunca subas el archivo `.env` al repositorio.** Asegúrate de que esté en `.gitignore`.
+
+---
 
 ## 🚀 Cómo levantar el proyecto
 
@@ -270,4 +274,4 @@ cd <servicio>
 
 ## 📄 Licencia
 
-Este proyecto fue desarrollado como proyecto académico. Todos los derechos reservados.
+© 2026 [gonzaloPalma22](https://github.com/gonzaloPalma22). Todos los derechos reservados.
