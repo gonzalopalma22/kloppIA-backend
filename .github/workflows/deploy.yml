@@ -117,3 +117,5 @@ jobs:
         run: |
           cd api-gateway
           railway up --service api-gateway
+
+#fix railway token
