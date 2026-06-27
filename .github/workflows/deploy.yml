@@ -29,6 +29,7 @@ jobs:
         run: |
           curl -fsSL https://railway.com/install.sh | bash
           source "$HOME/.railway/env"
+          ls -la
           railway up --service auth-service --project ${{ secrets.RAILWAY_PROJECT_ID }} --environment production auth-service
 
   deploy-apunte-service:
@@ -55,6 +56,7 @@ jobs:
         run: |
           curl -fsSL https://railway.com/install.sh | bash
           source "$HOME/.railway/env"
+          ls -la
           railway up --service apunte-service --project ${{ secrets.RAILWAY_PROJECT_ID }} --environment production apunte-service
 
   deploy-materia-service:
@@ -81,6 +83,7 @@ jobs:
         run: |
           curl -fsSL https://railway.com/install.sh | bash
           source "$HOME/.railway/env"
+          ls -la
           railway up --service materia-service --project ${{ secrets.RAILWAY_PROJECT_ID }} --environment production materia-service
 
   deploy-api-gateway:
@@ -108,4 +111,5 @@ jobs:
         run: |
           curl -fsSL https://railway.com/install.sh | bash
           source "$HOME/.railway/env"
+          ls -la
           railway up --service api-gateway --project ${{ secrets.RAILWAY_PROJECT_ID }} --environment production api-gateway
