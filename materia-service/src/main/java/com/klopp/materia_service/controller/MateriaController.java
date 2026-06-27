@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -23,6 +22,15 @@ public class MateriaController {
             Authentication authentication) {
         Long usuarioId = Long.parseLong(authentication.getName());
         return ResponseEntity.ok(materiaService.crear(dto, usuarioId));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<MateriaResponseDTO> editar(
+            @PathVariable Long id,
+            @Valid @RequestBody MateriaDTO dto,
+            Authentication authentication) {
+        Long usuarioId = Long.parseLong(authentication.getName());
+        return ResponseEntity.ok(materiaService.editar(id, usuarioId, dto));
     }
 
     @GetMapping
@@ -56,4 +64,4 @@ public class MateriaController {
         materiaService.eliminar(id, usuarioId);
         return ResponseEntity.ok("Materia eliminada correctamente");
     }
-} 
+}

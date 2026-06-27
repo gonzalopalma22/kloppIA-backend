@@ -1,12 +1,10 @@
 package com.klopp.materia_service.service;
-
 import com.klopp.materia_service.dto.MateriaDTO;
 import com.klopp.materia_service.dto.MateriaResponseDTO;
 import com.klopp.materia_service.model.Materia;
 import com.klopp.materia_service.repository.MateriaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,9 +19,19 @@ public class MateriaService {
         materia.setNombre(dto.getNombre());
         materia.setDescripcion(dto.getDescripcion());
         materia.setUsuarioId(usuarioId);
-
         Materia guardada = materiaRepository.save(materia);
         return mapToResponse(guardada);
+    }
+
+    public MateriaResponseDTO editar(Long id, Long usuarioId, MateriaDTO dto) {
+        Materia materia = materiaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Materia no encontrada"));
+        if (!materia.getUsuarioId().equals(usuarioId)) {
+            throw new RuntimeException("No tienes permiso para editar esta materia");
+        }
+        materia.setNombre(dto.getNombre());
+        materia.setDescripcion(dto.getDescripcion());
+        return mapToResponse(materiaRepository.save(materia));
     }
 
     public List<MateriaResponseDTO> listarPorUsuario(Long usuarioId) {
@@ -45,22 +53,18 @@ public class MateriaService {
     public MateriaResponseDTO obtenerPorId(Long id, Long usuarioId) {
         Materia materia = materiaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Materia no encontrada"));
-
         if (!materia.getUsuarioId().equals(usuarioId)) {
             throw new RuntimeException("No tienes permiso para ver esta materia");
         }
-
         return mapToResponse(materia);
     }
 
     public void eliminar(Long id, Long usuarioId) {
         Materia materia = materiaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Materia no encontrada"));
-
         if (!materia.getUsuarioId().equals(usuarioId)) {
             throw new RuntimeException("No tienes permiso para eliminar esta materia");
         }
-
         materiaRepository.deleteById(id);
     }
 
@@ -73,4 +77,4 @@ public class MateriaService {
                 materia.getCreatedAt()
         );
     }
-} 
+}

@@ -1,5 +1,4 @@
 package com.klopp.auth_service.security;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,19 +22,17 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .addFilterBefore(gatewayHeaderFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/login", "/api/auth/registro", "/error").permitAll()
-                .requestMatchers("/api/auth/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/auth/admin/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
-            )
-            
-            .addFilterBefore(gatewayHeaderFilter, UsernamePasswordAuthenticationFilter.class);
-
+            );
         return http.build();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); 
+        return new BCryptPasswordEncoder();
     }
 }

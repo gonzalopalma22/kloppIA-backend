@@ -1,12 +1,10 @@
 package com.klopp.apunte_service.controller;
-
 import com.klopp.apunte_service.dto.ApunteResponseDTO;
 import com.klopp.apunte_service.service.ApunteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -22,16 +20,23 @@ public class ApunteController {
             @PathVariable Long materiaId,
             @RequestParam("titulo") String titulo,
             @RequestParam("archivo") MultipartFile archivo,
-            @RequestHeader("X-User-Id") Long userId) throws IOException { // <-- Leemos el email directo del Gateway
-        
+            @RequestHeader("X-User-Id") Long userId) throws IOException {
         return ResponseEntity.ok(apunteService.crear(titulo, archivo, materiaId, userId));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApunteResponseDTO> editar(
+            @PathVariable Long materiaId,
+            @PathVariable Long id,
+            @RequestBody java.util.Map<String, String> body,
+            @RequestHeader("X-User-Id") Long userId) {
+        return ResponseEntity.ok(apunteService.editarTitulo(id, userId, body.get("titulo")));
     }
 
     @GetMapping
     public ResponseEntity<List<ApunteResponseDTO>> listar(
             @PathVariable Long materiaId,
             @RequestHeader("X-User-Id") Long userId) {
-        
         return ResponseEntity.ok(apunteService.listarPorMateria(materiaId, userId));
     }
 
@@ -40,7 +45,6 @@ public class ApunteController {
             @PathVariable Long materiaId,
             @RequestParam String titulo,
             @RequestHeader("X-User-Id") Long userId) {
-        
         return ResponseEntity.ok(apunteService.buscarPorTitulo(materiaId, userId, titulo));
     }
 
@@ -49,7 +53,6 @@ public class ApunteController {
             @PathVariable Long materiaId,
             @PathVariable Long id,
             @RequestHeader("X-User-Id") Long userId) {
-        
         return ResponseEntity.ok(apunteService.obtenerPorId(id, userId));
     }
 

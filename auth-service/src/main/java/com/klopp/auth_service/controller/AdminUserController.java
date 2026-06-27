@@ -25,4 +25,24 @@ public class AdminUserController {
         usuarioRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{id}")
+public ResponseEntity<Usuario> getUserById(@PathVariable Long id) {
+    return usuarioRepository.findById(id)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
+}
+
+    @PutMapping("/{id}")
+public ResponseEntity<Usuario> updateUser(@PathVariable Long id, @RequestBody Usuario datos) {
+        return usuarioRepository.findById(id)
+            .map(usuario -> {
+                usuario.setNombre(datos.getNombre());
+                usuario.setApellido(datos.getApellido());
+                usuario.setEmail(datos.getEmail());
+                usuario.setRol(datos.getRol());
+                return ResponseEntity.ok(usuarioRepository.save(usuario));
+             })
+             .orElse(ResponseEntity.notFound().build());
+ }
 }
