@@ -29,7 +29,7 @@ jobs:
         run: |
           cd auth-service
           curl -fsSL https://railway.com/install.sh | sh
-          railway up --service auth-service
+          ~/.railway/bin/railway up --service auth-service
 
   deploy-apunte-service:
     runs-on: ubuntu-latest
@@ -55,7 +55,7 @@ jobs:
         run: |
           cd apunte-service
           curl -fsSL https://railway.com/install.sh | sh
-          railway up --service apunte-service
+          ~/.railway/bin/railway up --service apunte-service
 
   deploy-materia-service:
     runs-on: ubuntu-latest
@@ -81,7 +81,7 @@ jobs:
         run: |
           cd materia-service
           curl -fsSL https://railway.com/install.sh | sh
-          railway up --service materia-service
+          ~/.railway/bin/railway up --service materia-service
 
   deploy-api-gateway:
     runs-on: ubuntu-latest
@@ -108,4 +108,6 @@ jobs:
         run: |
           cd api-gateway
           curl -fsSL https://railway.com/install.sh | sh
-          railway up --service api-gateway
+          ~/.railway/bin/railway up --service api-gateway
+
+          
