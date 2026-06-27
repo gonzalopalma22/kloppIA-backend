@@ -30,7 +30,7 @@ jobs:
           curl -fsSL https://railway.com/install.sh | bash
           source "$HOME/.railway/env"
           cd auth-service
-          railway up --service auth-service --project ${{ secrets.RAILWAY_PROJECT_ID }} --enviroment production
+          railway up --service auth-service --project ${{ secrets.RAILWAY_PROJECT_ID }} --environment production
 
   deploy-apunte-service:
     runs-on: ubuntu-latest
@@ -57,7 +57,7 @@ jobs:
           curl -fsSL https://railway.com/install.sh | bash
           source "$HOME/.railway/env"
           cd apunte-service
-          railway up --service apunte-service --project ${{ secrets.RAILWAY_PROJECT_ID }} --enviroment production
+          railway up --service apunte-service --project ${{ secrets.RAILWAY_PROJECT_ID }} --environment production
 
   deploy-materia-service:
     runs-on: ubuntu-latest
@@ -84,7 +84,7 @@ jobs:
           curl -fsSL https://railway.com/install.sh | bash
           source "$HOME/.railway/env"
           cd materia-service
-          railway up --service materia-service --project ${{ secrets.RAILWAY_PROJECT_ID }} --enviroment production
+          railway up --service materia-service --project ${{ secrets.RAILWAY_PROJECT_ID }} --environment production
 
   deploy-api-gateway:
     runs-on: ubuntu-latest
@@ -112,4 +112,4 @@ jobs:
           curl -fsSL https://railway.com/install.sh | bash
           source "$HOME/.railway/env"
           cd api-gateway
-          railway up --service api-gateway --project ${{ secrets.RAILWAY_PROJECT_ID }} --enviroment production
+          railway up --service api-gateway --project ${{ secrets.RAILWAY_PROJECT_ID }} --environment production
