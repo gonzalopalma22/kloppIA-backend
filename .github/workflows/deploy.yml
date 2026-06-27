@@ -23,12 +23,13 @@ jobs:
           mvn clean package -DskipTests
 
       - name: Deploy auth-service
+        shell: bash
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
+          curl -fsSL https://railway.com/install.sh | bash
           cd auth-service
-          curl -fsSL https://railway.com/install.sh | sh
           ~/.railway/bin/railway up --service auth-service
 
   deploy-apunte-service:
@@ -49,12 +50,13 @@ jobs:
           mvn clean package -DskipTests
 
       - name: Deploy apunte-service
+        shell: bash
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
+          curl -fsSL https://railway.com/install.sh | bash
           cd apunte-service
-          curl -fsSL https://railway.com/install.sh | sh
           ~/.railway/bin/railway up --service apunte-service
 
   deploy-materia-service:
@@ -75,12 +77,13 @@ jobs:
           mvn clean package -DskipTests
 
       - name: Deploy materia-service
+        shell: bash
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
+          curl -fsSL https://railway.com/install.sh | bash
           cd materia-service
-          curl -fsSL https://railway.com/install.sh | sh
           ~/.railway/bin/railway up --service materia-service
 
   deploy-api-gateway:
@@ -102,12 +105,11 @@ jobs:
           mvn clean package -DskipTests
 
       - name: Deploy api-gateway
+        shell: bash
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
+          curl -fsSL https://railway.com/install.sh | bash
           cd api-gateway
-          curl -fsSL https://railway.com/install.sh | sh
           ~/.railway/bin/railway up --service api-gateway
-
-          
