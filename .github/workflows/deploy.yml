@@ -28,6 +28,7 @@ jobs:
       - name: Deploy auth-service
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
           cd auth-service
           railway up --service auth-service
@@ -55,6 +56,7 @@ jobs:
       - name: Deploy apunte-service
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
           cd apunte-service
           railway up --service apunte-service
@@ -82,6 +84,7 @@ jobs:
       - name: Deploy materia-service
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
           cd materia-service
           railway up --service materia-service
@@ -110,6 +113,7 @@ jobs:
       - name: Deploy api-gateway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
           cd api-gateway
           railway up --service api-gateway
