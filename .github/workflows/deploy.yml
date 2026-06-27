@@ -22,15 +22,11 @@ jobs:
           cd auth-service
           mvn clean package -DskipTests
 
-      - name: Deploy auth-service
-        shell: bash
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
-        run: |
-          curl -fsSL https://railway.com/install.sh | bash
-          cd auth-service
-          ~/.railway/bin/railway up --service auth-service
+      - name: Deploy auth-service to Railway
+        uses: bervProject/railway-deploy@main
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+          service: auth-service
 
   deploy-apunte-service:
     runs-on: ubuntu-latest
@@ -49,15 +45,11 @@ jobs:
           cd apunte-service
           mvn clean package -DskipTests
 
-      - name: Deploy apunte-service
-        shell: bash
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
-        run: |
-          curl -fsSL https://railway.com/install.sh | bash
-          cd apunte-service
-          ~/.railway/bin/railway up --service apunte-service
+      - name: Deploy apunte-service to Railway
+        uses: bervProject/railway-deploy@main
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+          service: apunte-service
 
   deploy-materia-service:
     runs-on: ubuntu-latest
@@ -76,15 +68,11 @@ jobs:
           cd materia-service
           mvn clean package -DskipTests
 
-      - name: Deploy materia-service
-        shell: bash
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
-        run: |
-          curl -fsSL https://railway.com/install.sh | bash
-          cd materia-service
-          ~/.railway/bin/railway up --service materia-service
+      - name: Deploy materia-service to Railway
+        uses: bervProject/railway-deploy@main
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+          service: materia-service
 
   deploy-api-gateway:
     runs-on: ubuntu-latest
@@ -104,14 +92,8 @@ jobs:
           cd api-gateway
           mvn clean package -DskipTests
 
-      - name: Deploy api-gateway
-        shell: bash
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
-        run: |
-          curl -fsSL https://railway.com/install.sh | bash
-          cd api-gateway
-          ~/.railway/bin/railway up --service api-gateway
-
-#PRUEBA
+      - name: Deploy api-gateway to Railway
+        uses: bervProject/railway-deploy@main
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+          service: api-gateway
