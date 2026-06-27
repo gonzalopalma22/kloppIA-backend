@@ -113,3 +113,5 @@ jobs:
           source "$HOME/.railway/env"
           cd api-gateway
           railway up --service api-gateway --project ${{ secrets.RAILWAY_PROJECT_ID }} --environment production
+
+#prueba
