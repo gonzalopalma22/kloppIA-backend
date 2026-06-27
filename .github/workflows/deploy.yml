@@ -22,15 +22,13 @@ jobs:
           cd auth-service
           mvn clean package -DskipTests
 
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-
       - name: Deploy auth-service
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
           cd auth-service
+          curl -fsSL https://railway.com/install.sh | sh
           railway up --service auth-service
 
   deploy-apunte-service:
@@ -50,15 +48,13 @@ jobs:
           cd apunte-service
           mvn clean package -DskipTests
 
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-
       - name: Deploy apunte-service
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
           cd apunte-service
+          curl -fsSL https://railway.com/install.sh | sh
           railway up --service apunte-service
 
   deploy-materia-service:
@@ -78,15 +74,13 @@ jobs:
           cd materia-service
           mvn clean package -DskipTests
 
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-
       - name: Deploy materia-service
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
           cd materia-service
+          curl -fsSL https://railway.com/install.sh | sh
           railway up --service materia-service
 
   deploy-api-gateway:
@@ -107,15 +101,11 @@ jobs:
           cd api-gateway
           mvn clean package -DskipTests
 
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-
       - name: Deploy api-gateway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
           cd api-gateway
+          curl -fsSL https://railway.com/install.sh | sh
           railway up --service api-gateway
-
-#fix railway token
