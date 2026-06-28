@@ -25,7 +25,12 @@ public class JwtFilter implements WebFilter {
         String path = exchange.getRequest().getURI().getPath();
 
         if (exchange.getRequest().getMethod() == HttpMethod.OPTIONS) {
-            exchange.getResponse().getHeaders().add("Access-Control-Allow-Origin", "https://klopp-ia.vercel.app");
+            String origin = exchange.getRequest().getHeaders().getFirst("Origin");
+            String allowedOrigin = "https://klopp-ia.vercel.app";
+            if (origin != null && (origin.endsWith(".vercel.app") || origin.equals("http://localhost:5173"))) {
+                allowedOrigin = origin;
+            }
+            exchange.getResponse().getHeaders().add("Access-Control-Allow-Origin", allowedOrigin);
             exchange.getResponse().getHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
             exchange.getResponse().getHeaders().add("Access-Control-Allow-Headers", "*");
             exchange.getResponse().getHeaders().add("Access-Control-Allow-Credentials", "true");
