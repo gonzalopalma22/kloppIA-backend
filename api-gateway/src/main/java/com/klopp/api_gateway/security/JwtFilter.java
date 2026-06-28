@@ -1,4 +1,5 @@
 package com.klopp.api_gateway.security;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -23,9 +24,16 @@ public class JwtFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String path = exchange.getRequest().getURI().getPath();
 
-        if (exchange.getRequest().getMethod() == HttpMethod.OPTIONS ||
-            path.startsWith("/api/auth/login") ||
-            path.startsWith("/api/auth/registro")) {
+        if (exchange.getRequest().getMethod() == HttpMethod.OPTIONS) {
+            exchange.getResponse().getHeaders().add("Access-Control-Allow-Origin", "https://klopp-ia.vercel.app");
+            exchange.getResponse().getHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+            exchange.getResponse().getHeaders().add("Access-Control-Allow-Headers", "*");
+            exchange.getResponse().getHeaders().add("Access-Control-Allow-Credentials", "true");
+            exchange.getResponse().setStatusCode(HttpStatus.OK);
+            return exchange.getResponse().setComplete();
+        }
+
+        if (path.startsWith("/api/auth/login") || path.startsWith("/api/auth/registro")) {
             return chain.filter(exchange);
         }
 
