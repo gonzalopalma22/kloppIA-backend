@@ -7,7 +7,7 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-4169E1?style=flat-square&logo=postgresql&logoColor=white)
 ![Gemini](https://img.shields.io/badge/Google_Gemini-AI-8E75B2?style=flat-square&logo=google&logoColor=white)
 
-Backend de **Apuntesia**, una plataforma académica que permite a los estudiantes organizar sus materias, subir apuntes en PDF y obtener resúmenes automáticos generados con inteligencia artificial (Google Gemini).
+Backend de **Apuntesia**, una plataforma académica que permite a estudiantes organizar sus materias, subir apuntes en PDF y obtener resúmenes automáticos generados con inteligencia artificial (Google Gemini).
 
 Construido con arquitectura de microservicios en **Spring Boot**, desplegable con Docker Compose.
 
@@ -39,8 +39,6 @@ Cliente
         Todos los servicios ──► PostgreSQL (Supabase)
 ```
 
-### Microservicios
-
 | Servicio | Puerto interno | Responsabilidad |
 |---|---|---|
 | `api-gateway` | 8080 | Enrutamiento, validación JWT, propagación de headers de usuario |
@@ -64,17 +62,22 @@ Cliente
 
 ---
 
-## 📋 Requisitos
+## 📋 Prerrequisitos
 
-- Docker y Docker Compose instalados
-- JDK 17+ (solo si se corre sin Docker)
-- Maven 3.8+ (incluido en cada servicio como wrapper `mvnw`)
+| Herramienta | Versión mínima | Necesario para |
+|---|---|---|
+| Docker | 24+ | Levantar con Compose |
+| Docker Compose | 2.20+ | Orquestar servicios |
+| JDK | 17+ | Ejecución local sin Docker |
+| Maven | 3.8+ | Build local (incluido como `mvnw` en cada servicio) |
+
+> **Nota:** En macOS con Apple Silicon (M1/M2/M3), asegúrate de tener Docker Desktop configurado para arquitectura `linux/arm64` o activa la emulación Rosetta.
 
 ---
 
-## ⚙️ Configuración
+## ⚙️ Configuración del entorno
 
-Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
+Crea un archivo `.env` en la **raíz del proyecto** con las siguientes variables:
 
 ```env
 # Base de datos (PostgreSQL / Supabase)
@@ -83,120 +86,205 @@ SPRING_DATASOURCE_USERNAME=<usuario>
 SPRING_DATASOURCE_PASSWORD=<contraseña>
 
 # Seguridad JWT
-JWT_SECRET=<clave_secreta_larga_y_segura>
+JWT_SECRET=<clave_secreta_larga_y_segura_minimo_32_caracteres>
 
 # Google Gemini
 GEMINI_API_KEY=<tu_api_key_de_gemini>
 ```
 
-> ⚠️ **Nunca subas el archivo `.env` al repositorio.** Asegúrate de que esté en `.gitignore`.
+> ⚠️ **Nunca subas el archivo `.env` al repositorio.** Está incluido en `.gitignore`.
+
+### Obtener credenciales
+
+- **Supabase:** Crea un proyecto en [supabase.com](https://supabase.com), ve a *Settings → Database* y copia la Connection String (modo `Transaction pooler`).
+- **Gemini API Key:** Genera una clave en [Google AI Studio](https://aistudio.google.com/app/apikey).
+- **JWT Secret:** Puedes generar una clave segura con:
+  ```bash
+  openssl rand -base64 48
+  ```
 
 ---
 
-## 🚀 Cómo levantar el proyecto
+## 🚀 Instalación y ejecución
 
-### Con Docker Compose (recomendado)
+### Opción A — Docker Compose (recomendado)
 
 ```bash
-# Clonar el repositorio
+# 1. Clonar el repositorio
 git clone <url-del-repo>
 cd klopp-backend
 
-# Configurar variables de entorno
+# 2. Configurar variables de entorno
 cp .env.example .env
-# Editar .env con tus credenciales
+# Editar .env con tus credenciales reales
 
-# Construir y levantar todos los servicios
+# 3. Construir imágenes y levantar todos los servicios
 docker compose up --build
 ```
 
-El API Gateway quedará disponible en `http://localhost:8080`.
-
-### Sin Docker (desarrollo local)
-
-Levantar cada servicio por separado desde su directorio:
+Para levantar en segundo plano:
 
 ```bash
-cd auth-service && ./mvnw spring-boot:run
-cd materia-service && ./mvnw spring-boot:run
-cd apunte-service && ./mvnw spring-boot:run
-cd api-gateway && ./mvnw spring-boot:run
+docker compose up --build -d
 ```
+
+Para detener los servicios:
+
+```bash
+docker compose down
+```
+
+Una vez levantado, el **API Gateway** estará disponible en:
+
+```
+http://localhost:8080
+```
+
+Verifica que todos los contenedores estén corriendo:
+
+```bash
+docker compose ps
+```
+
+Deberías ver cuatro servicios en estado `running`: `api-gateway`, `auth-service`, `materia-service` y `apunte-service`.
+
+---
+
+### Opción B — Ejecución local sin Docker
+
+Cada servicio se puede levantar de forma independiente. Asegúrate de que las variables del `.env` estén disponibles en tu entorno o configúralas en `src/main/resources/application.properties` de cada servicio.
+
+Levanta los servicios en este orden (el gateway debe ir último):
+
+```bash
+# Terminal 1 — Auth Service
+cd auth-service
+./mvnw spring-boot:run
+
+# Terminal 2 — Materia Service
+cd materia-service
+./mvnw spring-boot:run
+
+# Terminal 3 — Apunte Service
+cd apunte-service
+./mvnw spring-boot:run
+
+# Terminal 4 — API Gateway
+cd api-gateway
+./mvnw spring-boot:run
+```
+
+En Windows, reemplaza `./mvnw` por `mvnw.cmd`.
 
 ---
 
 ## 📡 Endpoints de la API
 
-Todos los endpoints pasan por el API Gateway en `http://localhost:8080`.
-
-### Autenticación — `/api/auth`
-
-| Método | Ruta | Auth | Descripción |
-|---|---|---|---|
-| `POST` | `/api/auth/registro` | ❌ | Registrar nuevo usuario |
-| `POST` | `/api/auth/login` | ❌ | Login, retorna JWT |
-
-**Ejemplo — Registro:**
-```json
-POST /api/auth/registro
-{
-  "nombre": "Juan",
-  "apellido": "Pérez",
-  "email": "juan@ejemplo.com",
-  "password": "miContraseña123"
-}
-```
-
-**Ejemplo — Login:**
-```json
-POST /api/auth/login
-{
-  "email": "juan@ejemplo.com",
-  "password": "miContraseña123"
-}
-// Respuesta:
-{
-  "token": "eyJhbGciOiJIUzI1NiJ9..."
-}
-```
+Todos los endpoints se acceden a través del **API Gateway** en `http://localhost:8080`.
 
 ---
 
-### Materias — `/api/materias`
+### 🔑 Auth Service — `/api/auth`
 
-Requieren header `Authorization: Bearer <token>`.
+Rutas **públicas** (no requieren token).
+
+| Método | Ruta | Descripción |
+|---|---|---|
+| `POST` | `/api/auth/registro` | Registrar nuevo usuario |
+| `POST` | `/api/auth/login` | Login, retorna JWT |
+
+**Registro:**
+```bash
+curl -X POST http://localhost:8080/api/auth/registro \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nombre": "Juan",
+    "apellido": "Pérez",
+    "email": "juan@ejemplo.com",
+    "password": "miContraseña123"
+  }'
+# Respuesta: "Usuario registrado correctamente"
+```
+
+**Login:**
+```bash
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "juan@ejemplo.com",
+    "password": "miContraseña123"
+  }'
+# Respuesta:
+# { "token": "eyJhbGciOiJIUzI1NiJ9...", "nombre": "Juan", "rol": "ROLE_USER" }
+```
+
+Guarda el `token` de la respuesta — lo necesitarás en todos los endpoints siguientes.
+
+---
+
+### 📚 Materia Service — `/api/materias`
+
+Todos los endpoints requieren el header `Authorization: Bearer <token>`.
 
 | Método | Ruta | Descripción |
 |---|---|---|
 | `POST` | `/api/materias` | Crear una materia |
-| `GET` | `/api/materias` | Listar materias del usuario |
+| `GET` | `/api/materias` | Listar materias del usuario autenticado |
 | `GET` | `/api/materias/{id}` | Obtener una materia por ID |
 | `GET` | `/api/materias/buscar?nombre=X` | Buscar materias por nombre |
+| `PUT` | `/api/materias/{id}` | Editar nombre/descripción de una materia |
 | `DELETE` | `/api/materias/{id}` | Eliminar una materia |
+
+**Crear materia:**
+```bash
+curl -X POST http://localhost:8080/api/materias \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"nombre": "Cálculo I", "descripcion": "Límites, derivadas e integrales"}'
+```
+
+**Listar materias:**
+```bash
+curl http://localhost:8080/api/materias \
+  -H "Authorization: Bearer <token>"
+```
+
+**Buscar por nombre:**
+```bash
+curl "http://localhost:8080/api/materias/buscar?nombre=Cálculo" \
+  -H "Authorization: Bearer <token>"
+```
+
+**Eliminar materia:**
+```bash
+curl -X DELETE http://localhost:8080/api/materias/1 \
+  -H "Authorization: Bearer <token>"
+```
 
 ---
 
-### Apuntes — `/api/materias/{materiaId}/apuntes`
+### 📄 Apunte Service — `/api/materias/{materiaId}/apuntes`
 
-Requieren header `Authorization: Bearer <token>`. Los apuntes se suben como `multipart/form-data`.
+Todos los endpoints requieren `Authorization: Bearer <token>`. Los apuntes se suben como `multipart/form-data`.
 
 | Método | Ruta | Descripción |
 |---|---|---|
-| `POST` | `/api/materias/{materiaId}/apuntes` | Subir un apunte PDF (genera resumen automático con IA) |
+| `POST` | `/api/materias/{materiaId}/apuntes` | Subir PDF (genera resumen con IA automáticamente) |
 | `GET` | `/api/materias/{materiaId}/apuntes` | Listar apuntes de una materia |
 | `GET` | `/api/materias/{materiaId}/apuntes/{id}` | Obtener un apunte por ID |
 | `GET` | `/api/materias/{materiaId}/apuntes/buscar?titulo=X` | Buscar apuntes por título |
+| `PUT` | `/api/materias/{materiaId}/apuntes/{id}` | Editar título de un apunte |
 | `DELETE` | `/api/materias/{materiaId}/apuntes/{id}` | Eliminar un apunte |
 
-**Ejemplo — Subir apunte:**
+**Subir apunte PDF:**
 ```bash
 curl -X POST http://localhost:8080/api/materias/1/apuntes \
   -H "Authorization: Bearer <token>" \
   -F "titulo=Clase 1 - Introducción" \
-  -F "archivo=@apunte.pdf"
+  -F "archivo=@/ruta/local/apunte.pdf"
 ```
 
-**Respuesta:**
+Respuesta esperada:
 ```json
 {
   "id": 1,
@@ -204,70 +292,176 @@ curl -X POST http://localhost:8080/api/materias/1/apuntes \
   "resumen": "**Puntos clave:**\n- Concepto A...\n- Concepto B...",
   "nombreArchivo": "apunte.pdf",
   "materiaId": 1,
-  "createdAt": "2026-06-25T10:30:00"
+  "createdAt": "2026-06-28T10:30:00"
 }
 ```
 
+**Listar apuntes de una materia:**
+```bash
+curl http://localhost:8080/api/materias/1/apuntes \
+  -H "Authorization: Bearer <token>"
+```
+
 ---
 
-## 🔐 Seguridad
+## 🔐 Flujo de seguridad
 
-El flujo de autenticación funciona así:
-
-1. El cliente obtiene un **JWT** mediante `POST /api/auth/login`.
+1. El cliente obtiene un **JWT** via `POST /api/auth/login`.
 2. Incluye el token en el header `Authorization: Bearer <token>` en cada request.
-3. El **API Gateway** intercepta todas las rutas (excepto `/api/auth/*`), valida el JWT y extrae los claims.
-4. Los claims del usuario (`X-User-Id`, `X-User-Email`, `X-User-Rol`) se propagan como headers internos hacia los microservicios.
-5. Cada servicio confía en estos headers para identificar al usuario sin revalidar el token.
-
----
-
-## 🗂️ Estructura del Proyecto
-
-```
-klopp-backend/
-├── api-gateway/          # Enrutador y validador de JWT
-│   └── src/main/java/com/klopp/api_gateway/
-│       └── security/JwtFilter.java
-├── auth-service/         # Registro, login y JWT
-│   └── src/main/java/com/klopp/auth_service/
-│       ├── controller/   # AuthController, AdminUserController
-│       ├── service/      # AuthService
-│       ├── model/        # Usuario, Rol
-│       └── security/     # JwtService, SecurityConfig
-├── materia-service/      # CRUD de materias
-│   └── src/main/java/com/klopp/materia_service/
-│       ├── controller/   # MateriaController
-│       ├── service/      # MateriaService
-│       └── model/        # Materia
-├── apunte-service/       # Apuntes PDF + resúmenes IA
-│   └── src/main/java/com/klopp/apunte_service/
-│       ├── controller/   # ApunteController
-│       ├── service/      # ApunteService, GeminiService
-│       └── model/        # Apunte
-├── docker-compose.yml
-└── .env
-```
-
----
-
-## 🤖 Integración con Google Gemini
-
-Cuando se sube un apunte PDF, el `apunte-service` envía el archivo en formato Base64 a la API de Google Gemini con el siguiente prompt:
-
-> *"Eres un asistente académico. Resume el siguiente apunte en puntos clave claros y concisos, organizados por temas principales."*
-
-El resumen generado se almacena junto con los metadatos del apunte en la base de datos.
+3. El **API Gateway** intercepta todas las rutas excepto `/api/auth/*`, valida el JWT y extrae los claims.
+4. Los claims (`X-User-Id`, `X-User-Email`, `X-User-Rol`) se propagan como headers internos hacia los microservicios.
+5. Cada microservicio confía en estos headers para identificar al usuario sin revalidar el token.
 
 ---
 
 ## 🧪 Tests
 
-Cada servicio incluye una clase de test de integración base. Para ejecutarlos:
+Cada microservicio incluye tests unitarios con **JUnit 5** y **Mockito** que cubren los casos de éxito y error del servicio de negocio.
+
+### Ejecutar tests de un servicio
 
 ```bash
-cd <servicio>
+# Auth Service
+cd auth-service
 ./mvnw test
+
+# Materia Service
+cd materia-service
+./mvnw test
+
+# Apunte Service
+cd apunte-service
+./mvnw test
+```
+
+### Ejecutar todos los tests desde la raíz
+
+```bash
+for service in auth-service materia-service apunte-service; do
+  echo "=== Tests: $service ==="
+  (cd $service && ./mvnw test)
+done
+```
+
+### Cobertura de tests por servicio
+
+#### `auth-service` — `AuthServiceTest`
+
+| Test | Descripción |
+|---|---|
+| `registro_exitoso` | Verifica que un usuario nuevo se guarde correctamente en la BD |
+| `registro_emailDuplicado_lanzaExcepcion` | Verifica que no se registre un email ya existente |
+| `login_exitoso` | Verifica que login retorne token y datos del usuario |
+| `login_usuarioNoEncontrado_lanzaExcepcion` | Verifica error cuando el email no existe |
+| `login_contrasenaIncorrecta_lanzaExcepcion` | Verifica error cuando la contraseña no coincide |
+
+#### `materia-service` — `MateriaServiceTest`
+
+| Test | Descripción |
+|---|---|
+| `crear_exitoso` | Verifica creación de una materia y retorno del DTO |
+| `listarPorUsuario_retornaLista` | Verifica listado de materias del usuario autenticado |
+| `obtenerPorId_exitoso` | Verifica obtención de una materia por ID |
+| `obtenerPorId_noEncontrado_lanzaExcepcion` | Verifica error cuando la materia no existe |
+| `obtenerPorId_sinPermiso_lanzaExcepcion` | Verifica que un usuario no acceda a materias ajenas |
+| `eliminar_exitoso` | Verifica eliminación de una materia propia |
+| `eliminar_sinPermiso_lanzaExcepcion` | Verifica que no se eliminen materias de otro usuario |
+
+#### `apunte-service` — `ApunteServiceTest`
+
+| Test | Descripción |
+|---|---|
+| `crear_exitoso` | Verifica subida de PDF, llamada a Gemini y guardado del apunte |
+| `listarPorMateria_retornaLista` | Verifica listado de apuntes de una materia |
+| `obtenerPorId_exitoso` | Verifica obtención de un apunte por ID |
+| `obtenerPorId_noEncontrado_lanzaExcepcion` | Verifica error cuando el apunte no existe |
+| `obtenerPorId_sinPermiso_lanzaExcepcion` | Verifica que un usuario no acceda a apuntes ajenos |
+| `eliminar_exitoso` | Verifica eliminación de un apunte propio |
+| `eliminar_sinPermiso_lanzaExcepcion` | Verifica que no se eliminen apuntes de otro usuario |
+
+---
+
+## 🤖 Integración con Google Gemini
+
+Cuando se sube un apunte PDF, el `apunte-service` convierte el archivo a Base64 y lo envía a la API de Google Gemini con el siguiente prompt:
+
+> *"Eres un asistente académico. Resume el siguiente apunte en puntos clave claros y concisos, organizados por temas principales."*
+
+El resumen generado se almacena junto con los metadatos del apunte en PostgreSQL.
+
+---
+
+## 🗂️ Estructura del proyecto
+
+```
+klopp-backend/
+├── .env                          # Variables de entorno (no subir al repo)
+├── docker-compose.yml            # Orquestación de todos los servicios
+├── api-gateway/                  # Enrutador y validador de JWT
+│   ├── Dockerfile
+│   ├── pom.xml
+│   └── src/main/java/com/klopp/api_gateway/
+│       ├── config/CorsConfig.java
+│       └── security/JwtFilter.java
+├── auth-service/                 # Registro, login y JWT
+│   ├── Dockerfile
+│   ├── pom.xml
+│   └── src/
+│       ├── main/java/com/klopp/auth_service/
+│       │   ├── controller/       # AuthController, AdminUserController
+│       │   ├── dto/              # LoginDTO, RegistroDTO, JwtResponseDTO
+│       │   ├── model/            # Usuario, Rol
+│       │   ├── repository/       # UsuarioRepository
+│       │   ├── security/         # JwtService, SecurityConfig, GatewayHeaderFilter
+│       │   └── service/          # AuthService
+│       └── test/java/com/klopp/auth_service/
+│           └── service/AuthServiceTest.java
+├── materia-service/              # CRUD de materias
+│   ├── Dockerfile
+│   ├── pom.xml
+│   └── src/
+│       ├── main/java/com/klopp/materia_service/
+│       │   ├── controller/       # MateriaController
+│       │   ├── dto/              # MateriaDTO, MateriaResponseDTO
+│       │   ├── model/            # Materia
+│       │   ├── repository/       # MateriaRepository
+│       │   ├── security/         # SecurityConfig, GatewayHeaderFilter
+│       │   └── service/          # MateriaService
+│       └── test/java/com/klopp/materia_service/
+│           └── service/MateriaServiceTest.java
+└── apunte-service/               # Apuntes PDF + resúmenes IA
+    ├── Dockerfile
+    ├── pom.xml
+    └── src/
+        ├── main/java/com/klopp/apunte_service/
+        │   ├── controller/       # ApunteController
+        │   ├── dto/              # ApunteDTO, ApunteResponseDTO
+        │   ├── model/            # Apunte
+        │   ├── repository/       # ApunteRepository
+        │   ├── security/         # SecurityConfig, GatewayHeaderFilter, AppConfig
+        │   └── service/          # ApunteService, GeminiService
+        └── test/java/com/klopp/apunte_service/
+            └── service/ApunteServiceTest.java
+```
+
+---
+
+## 🐛 Solución de problemas
+
+**Los contenedores no levantan:**
+Verifica que el archivo `.env` esté en la raíz del proyecto y que todas las variables estén definidas.
+
+**Error de conexión a la base de datos:**
+Confirma que la URL de Supabase sea la del modo `Transaction pooler` (puerto 5432) y no la del `Session pooler`. La URL debe incluir `?sslmode=require`.
+
+**`apunte-service` retorna error al generar resumen:**
+Verifica que `GEMINI_API_KEY` sea válida y que el archivo subido sea un PDF con contenido de texto (los PDFs escaneados solo como imagen pueden no extraerse correctamente).
+
+**Puerto 8080 ya en uso:**
+Detén el proceso que ocupa ese puerto o cambia el puerto del gateway en `docker-compose.yml`:
+```yaml
+ports:
+  - "9090:8080"   # cambia 9090 por el puerto libre que prefieras
 ```
 
 ---
