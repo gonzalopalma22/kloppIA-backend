@@ -100,14 +100,16 @@ public class GeminiService {
     public String chat(String resumen, List<Map<String, String>> historial, String pregunta) {
         List<Map<String, Object>> contents = new ArrayList<>();
 
-        
-      contents.add(Map.of(
+       
+        contents.add(Map.of(
             "role", "user",
             "parts", List.of(Map.of("text",
                 "Eres un asistente académico que ayuda a estudiantes con sus apuntes universitarios. " +
-                "Puedes responder preguntas sobre el contenido, explicar conceptos de otra manera, " +
-                "corregir o mejorar el resumen, ampliarlo, resumirlo más, o ayudar con cualquier " +
-                "tarea académica relacionada. " +
+                "Responde sobre el contenido del apunte o temas directamente relacionados con él. " +
+                "Puedes explicar conceptos de otra manera, responder dudas, dar ejemplos, " +
+                "mejorar o condensar el resumen, siempre basándote en el contenido del apunte. " +
+                "Si te preguntan algo que no tiene ninguna relación con el apunte, " +
+                "indícalo amablemente y redirige al contenido. " +
                 "Responde siempre en español, de forma clara y concisa.\n\n" +
                 "Resumen del apunte:\n" + resumen
             ))
@@ -120,7 +122,7 @@ public class GeminiService {
             ))
         ));
 
-        
+        // Agregar historial validando que no haya roles consecutivos iguales
         String rolAnterior = "model";
         for (Map<String, String> mensaje : historial) {
             String role    = mensaje.get("role");
@@ -137,18 +139,10 @@ public class GeminiService {
         }
 
         
-        if (!rolAnterior.equals("user")) {
-            contents.add(Map.of(
-                "role", "user",
-                "parts", List.of(Map.of("text", pregunta))
-            ));
-        } else {
-            
-            contents.add(Map.of(
-                "role", "user",
-                "parts", List.of(Map.of("text", pregunta))
-            ));
-        }
+        contents.add(Map.of(
+            "role", "user",
+            "parts", List.of(Map.of("text", pregunta))
+        ));
 
         Map<String, Object> request = Map.of("contents", contents);
         return llamarGemini(request);
